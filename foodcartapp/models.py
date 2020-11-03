@@ -78,3 +78,15 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items', verbose_name='Товар')
+    quantity = models.PositiveSmallIntegerField('Количество', default=1)
+
+    class Meta:
+        verbose_name = 'Содержимое заказа'
+        unique_together = [
+            ['order', 'product']
+        ]
