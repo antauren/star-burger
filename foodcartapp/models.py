@@ -64,3 +64,17 @@ class RestaurantMenuItem(models.Model):
         unique_together = [
             ['restaurant', 'product']
         ]
+
+
+class Order(models.Model):
+    address = models.CharField('Адрес', max_length=100)
+    firstname = models.CharField('Имя', max_length=20)
+    lastname = models.CharField('Фамилия', max_length=20)
+    phone_number = models.CharField('Телефон', max_length=20)
+
+    def __str__(self):
+        return '{} {} {}'.format(self.firstname[:10], self.lastname[:10], self.address[:10])
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
