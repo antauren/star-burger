@@ -68,7 +68,7 @@ def register_order(request):
     products = serializer.validated_data['products']
 
     if not products:
-        Response(request.data, status=status.HTTP_204_NO_CONTENT)
+        return Response(request.data, status=status.HTTP_204_NO_CONTENT)
 
     order = Order.objects.create(address=serializer.validated_data['address'],
                                  firstname=serializer.validated_data['firstname'],
