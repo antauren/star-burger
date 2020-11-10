@@ -64,13 +64,21 @@ def product_list_api(request):
 def register_order(request):
     order_data = request.data
 
+    products = order_data.get('products')
+
+    if not isinstance(products, list):
+        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+    if not products:
+        return Response(request.data, status=status.HTTP_204_NO_CONTENT)
+
     order, _ = Order.objects.update_or_create(address=order_data['address'],
                                               firstname=order_data['firstname'],
                                               lastname=order_data['lastname'],
                                               phone_number=order_data['phonenumber'],
                                               )
 
-    for item in order_data['products']:
+    for item in products:
         order_item, _ = OrderItem.objects.update_or_create(order=order,
                                                            product=get_object_or_404(Product, pk=item['product']),
                                                            quantity=item['quantity'],
