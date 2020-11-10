@@ -64,13 +64,37 @@ def product_list_api(request):
 def register_order(request):
     order_data = request.data
 
+    if not order_data:
+        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+    for key in ['address', 'firstname', 'lastname', 'phonenumber']:
+        if key not in order_data:
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+        if not isinstance(order_data[key], str):
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+        if not order_data[key]:
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
     products = order_data.get('products')
 
     if not isinstance(products, list):
         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
     if not products:
-        return Response(request.data, status=status.HTTP_204_NO_CONTENT)
+        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+    for item in products:
+        if not isinstance(item['product'], int):
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+        get_object_or_404(Product, pk=item['product'])
+
+        if not isinstance(item['quantity'], int):
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+        if item['quantity'] < 1:
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
     order, _ = Order.objects.update_or_create(address=order_data['address'],
                                               firstname=order_data['firstname'],
