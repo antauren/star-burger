@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Order, OrderItem, Product
+from .serializers import OrderSerializer
 
 
 def banners_list_api(request):
@@ -62,49 +63,65 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    order_data = request.data
-
-    if not order_data:
-        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-
-    for key in ['address', 'firstname', 'lastname', 'phonenumber']:
-        if key not in order_data:
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-
-        if not isinstance(order_data[key], str):
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-
-        if not order_data[key]:
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-
-    products = order_data.get('products')
-
-    if not isinstance(products, list):
-        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    serializer = OrderSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    products = serializer.validated_data['products']
 
     if not products:
-        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+        Response(request.data, status=status.HTTP_204_NO_CONTENT)
 
-    for item in products:
-        if not isinstance(item['product'], int):
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    order = Order.objects.create(address=serializer.validated_data['address'],
+                                 firstname=serializer.validated_data['firstname'],
+                                 lastname=serializer.validated_data['lastname'],
+                                 phonenumber=serializer.validated_data['phonenumber'],
+                                 )
 
-        get_object_or_404(Product, pk=item['product'])
+    order_items = [OrderItem(order=order, **fields) for fields in products]
+    OrderItem.objects.bulk_create(order_items)
 
-        if not isinstance(item['quantity'], int):
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-        if item['quantity'] < 1:
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-
-    order, _ = Order.objects.update_or_create(address=order_data['address'],
-                                              firstname=order_data['firstname'],
-                                              lastname=order_data['lastname'],
-                                              phone_number=order_data['phonenumber'],
-                                              )
-
-    for item in products:
-        order_item, _ = OrderItem.objects.update_or_create(order=order,
-                                                           product=get_object_or_404(Product, pk=item['product']),
-                                                           quantity=item['quantity'],
-                                                           )
+    # order_data = request.data
+    #
+    # if not order_data:
+    #     return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # for key in ['address', 'firstname', 'lastname', 'phonenumber']:
+    #     if key not in order_data:
+    #         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     if not isinstance(order_data[key], str):
+    #         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     if not order_data[key]:
+    #         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # products = order_data.get('products')
+    #
+    # if not isinstance(products, list):
+    #     return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # if not products:
+    #     return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # for item in products:
+    #     if not isinstance(item['product'], int):
+    #         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     get_object_or_404(Product, pk=item['product'])
+    #
+    #     if not isinstance(item['quantity'], int):
+    #         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #     if item['quantity'] < 1:
+    #         return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # order, _ = Order.objects.update_or_create(address=order_data['address'],
+    #                                           firstname=order_data['firstname'],
+    #                                           lastname=order_data['lastname'],
+    #                                           phone_number=order_data['phonenumber'],
+    #                                           )
+    #
+    # for item in products:
+    #     order_item, _ = OrderItem.objects.update_or_create(order=order,
+    #                                                        product=get_object_or_404(Product, pk=item['product']),
+    #                                                        quantity=item['quantity'],
+    #                                                        )
     return Response(request.data, status=status.HTTP_201_CREATED)
