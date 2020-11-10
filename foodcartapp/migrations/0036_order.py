@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('address', models.CharField(max_length=100, verbose_name='Адрес')),
                 ('firstname', models.CharField(max_length=20, verbose_name='Имя')),
                 ('lastname', models.CharField(max_length=20, verbose_name='Фамилия')),
-                ('phone_number', models.CharField(max_length=20, verbose_name='Телефон')),
+                ('phonenumber', models.CharField(max_length=20, verbose_name='Телефон')),
             ],
             options={
                 'verbose_name': 'Заказ',
