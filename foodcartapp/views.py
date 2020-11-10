@@ -1,10 +1,10 @@
 import json
+
 from django.http import JsonResponse
-from django.templatetags.static import static
 from django.shortcuts import get_object_or_404
+from django.templatetags.static import static
 
-
-from .models import Product, Order, OrderItem
+from .models import Order, OrderItem, Product
 
 
 def banners_list_api(request):
