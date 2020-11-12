@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Order, OrderItem, Product
-from .serializers import OrderSerializer, OrderItemSerializer
+from .serializers import OrderItemSerializer, OrderSerializer
 
 
 def banners_list_api(request):
