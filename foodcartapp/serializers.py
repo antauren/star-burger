@@ -6,12 +6,10 @@ from .models import Order, OrderItem
 class OrderItemSerializer(ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = '__all__'
+        exclude = ['order']
 
 
 class OrderSerializer(ModelSerializer):
-    products = OrderItemSerializer(many=True)
-
     class Meta:
         model = Order
         fields = '__all__'

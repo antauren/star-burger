@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Order, OrderItem, Product
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderItemSerializer
 
 
 def banners_list_api(request):
@@ -63,20 +63,28 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    serializer = OrderSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    products = serializer.validated_data['products']
+    order_serializer = OrderSerializer(data=request.data)
+    order_serializer.is_valid(raise_exception=True)
 
-    if not products:
+    items_serializer = OrderItemSerializer(data=request.data.get('products', []), many=True)
+    items_serializer.is_valid(raise_exception=True)
+
+    validated_items = items_serializer.validated_data
+    if not validated_items:
         return Response(request.data, status=status.HTTP_204_NO_CONTENT)
 
-    order = Order.objects.create(address=serializer.validated_data['address'],
-                                 firstname=serializer.validated_data['firstname'],
-                                 lastname=serializer.validated_data['lastname'],
-                                 phonenumber=serializer.validated_data['phonenumber'],
+    validated_order = order_serializer.validated_data
+    order = Order.objects.create(address=validated_order['address'],
+                                 firstname=validated_order['firstname'],
+                                 lastname=validated_order['lastname'],
+                                 phonenumber=validated_order['phonenumber'],
                                  )
 
-    order_items = [OrderItem(order=order, **fields) for fields in products]
-    OrderItem.objects.bulk_create(order_items)
+    for order_item in validated_items:
+        OrderItem.objects.get_or_create(order=order,
+                                        product=order_item['product'],
+                                        quantity=order_item['quantity'],
+                                        price=order_item['product'].price
+                                        )
 
     return Response(request.data, status=status.HTTP_201_CREATED)
