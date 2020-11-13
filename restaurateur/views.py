@@ -180,3 +180,17 @@ def get_distance(place, restaurant):
     distance_ = distance.distance(place_coords, restaurant_coords)
 
     return distance_.km
+
+
+def _get_coordinates(place):
+    coords = cache.get(place)
+
+    if coords is None:
+        try:
+            coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
+        except (IndexError, HTTPError):
+            coords = 'error'
+
+        cache.set(place, coords, 60 * 30)
+
+    return coords
