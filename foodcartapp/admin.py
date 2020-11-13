@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.shortcuts import reverse
 from django.utils.html import format_html
+from django.forms import ModelForm
+from django.shortcuts import HttpResponseRedirect
 
 from .models import Product
 from .models import ProductCategory
@@ -9,13 +11,25 @@ from .models import RestaurantMenuItem
 from .models import Order, OrderItem
 
 
+class OrderModelAdmin(admin.ModelAdmin):
+    form = ModelForm
+
+    def response_change(self, request, obj):
+        res = super(OrderModelAdmin, self).response_change(request, obj)
+
+        if 'next' in request.GET:
+            return HttpResponseRedirect(request.GET['next'])
+        else:
+            return res
+
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
 
 
 @admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(OrderModelAdmin):
     inlines = [
         OrderItemInline
     ]
