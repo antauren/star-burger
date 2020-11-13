@@ -73,6 +73,12 @@ class Order(models.Model):
         ('unprocessed', 'Необработанный'),
         ('processed', 'Обработанный'),
     )
+
+    PAYMENT_CHOICES = (
+        ('cash', 'Наличностью'),
+        ('card', 'Электронно'),
+        ('not_selected', 'Не выбран'),
+    )
     address = models.CharField('Адрес', max_length=100)
     firstname = models.CharField('Имя', max_length=20)
     lastname = models.CharField('Фамилия', max_length=20)
@@ -82,6 +88,7 @@ class Order(models.Model):
     registered_at = models.DateTimeField(auto_now=True)
     called_at = models.DateTimeField(default=dt.date.today)
     delivered_at = models.DateTimeField(default=dt.date.today)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='not_selected')
 
     def __str__(self):
         return '{} {} {}'.format(self.firstname[:10], self.lastname[:10], self.address[:10])
