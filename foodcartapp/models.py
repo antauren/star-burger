@@ -67,10 +67,15 @@ class RestaurantMenuItem(models.Model):
 
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('unprocessed', 'Необработанный'),
+        ('processed', 'Обработанный'),
+    )
     address = models.CharField('Адрес', max_length=100)
     firstname = models.CharField('Имя', max_length=20)
     lastname = models.CharField('Фамилия', max_length=20)
     phonenumber = models.CharField('Телефон', max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unprocessed')
 
     def __str__(self):
         return '{} {} {}'.format(self.firstname[:10], self.lastname[:10], self.address[:10])
