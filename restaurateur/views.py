@@ -104,6 +104,7 @@ def view_orders(request):
          'address': order.address,
          'comment': order.comment,
          'payment_method': order.get_payment_method_display(),
+         'restaurants': _get_order_restaurants(order),
          'total_amount': order.items.all().aggregate(total_amount=Sum(F('price') * F('quantity'),
                                                                       output_field=DecimalField(max_digits=8,
                                                                                                 decimal_places=2)
@@ -119,3 +120,13 @@ def view_orders(request):
     return render(request, template_name='order_items.html', context={
         'orders': orders,
     })
+
+
+def _get_order_restaurants(order) -> set:
+    restaurants = set()
+
+    for item in order.items.all():
+        for menu_item in item.product.menu_items.filter(availability=True):
+            restaurants.add(menu_item.restaurant)
+
+    return restaurants
