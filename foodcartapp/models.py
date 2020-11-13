@@ -77,6 +77,7 @@ class Order(models.Model):
     phonenumber = models.CharField('Телефон', max_length=20)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unprocessed')
     comment = models.TextField('Комментарий', blank=True)
+    registered_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '{} {} {}'.format(self.firstname[:10], self.lastname[:10], self.address[:10])
