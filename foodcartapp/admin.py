@@ -1,14 +1,10 @@
 from django.contrib import admin
-from django.shortcuts import reverse
-from django.utils.html import format_html
 from django.forms import ModelForm
-from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, reverse
+from django.utils.html import format_html
 
-from .models import Product
-from .models import ProductCategory
-from .models import Restaurant
-from .models import RestaurantMenuItem
-from .models import Order, OrderItem
+from .models import (Order, OrderItem, Product, ProductCategory, Restaurant,
+                     RestaurantMenuItem)
 
 
 class OrderModelAdmin(admin.ModelAdmin):
