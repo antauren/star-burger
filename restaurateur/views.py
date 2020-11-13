@@ -8,6 +8,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from geopy import distance
+from requests.exceptions import HTTPError
 
 from foodcartapp.models import Order, Product, Restaurant
 from StarBurger.settings import YANDEX_GEOCODER_API_KEY
@@ -159,7 +160,7 @@ def get_distance(place, restaurant):
         try:
             place_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
             cache.set(place, place_coords, timeout)
-        except IndexError:
+        except (IndexError, HTTPError):
             cache.set(place, 'error', timeout)
             return None
 
@@ -168,7 +169,7 @@ def get_distance(place, restaurant):
         try:
             restaurant_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, restaurant)
             cache.set(restaurant, restaurant_coords, timeout)
-        except IndexError:
+        except (IndexError, HTTPError):
             cache.set(restaurant, 'error', timeout)
             return None
 
