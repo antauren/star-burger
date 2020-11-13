@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import user_passes_test
+from django.core.cache import cache
 from django.db.models import DecimalField, F, Sum
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -152,11 +153,24 @@ def _get_order_restaurants_with_coords(order) -> list:
 
 
 def get_distance(place, restaurant):
-    try:
-        place_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
-        restaurant_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, restaurant)
-    except IndexError:
-        return None
+    timeout = 60 * 60 * 6
+    place_coords = cache.get(place)
+    if place_coords is None:
+        try:
+            place_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
+            cache.set(place, place_coords, timeout)
+        except IndexError:
+            cache.set(place, 'error', timeout)
+            return None
+
+    restaurant_coords = cache.get(restaurant)
+    if restaurant_coords is None:
+        try:
+            restaurant_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, restaurant)
+            cache.set(restaurant, restaurant_coords, timeout)
+        except IndexError:
+            cache.set(restaurant, 'error', timeout)
+            return None
 
     distance_ = distance.distance(place_coords, restaurant_coords)
 

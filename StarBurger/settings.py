@@ -120,3 +120,10 @@ STATICFILES_DIRS = [
 ]
 
 YANDEX_GEOCODER_API_KEY = 'REPLACE_ME'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
