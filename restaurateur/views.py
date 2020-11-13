@@ -144,7 +144,7 @@ def _get_order_restaurants_with_coords(order) -> list:
     restaurants = []
 
     for restaurant in _get_order_restaurants(order):
-        distance_ = get_distance(order.address, restaurant.address)
+        distance_ = _get_distance(order.address, restaurant.address)
         if distance_ is None:
             continue
         restaurants.append({'name': restaurant.name,
@@ -153,7 +153,7 @@ def _get_order_restaurants_with_coords(order) -> list:
     return restaurants
 
 
-def get_distance(place, restaurant):
+def _get_distance(place, restaurant):
     place_coords, restaurant_coords = map(_get_coordinates, [place, restaurant])
 
     if 'error' in [place_coords, restaurant_coords]:
