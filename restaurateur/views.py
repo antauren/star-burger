@@ -6,8 +6,12 @@ from django.db.models import DecimalField, F, Sum
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
+from geopy import distance
 
 from foodcartapp.models import Order, Product, Restaurant
+from StarBurger.settings import YANDEX_GEOCODER_API_KEY
+
+from .utils import fetch_coordinates
 
 
 class Login(forms.Form):
@@ -104,7 +108,9 @@ def view_orders(request):
          'address': order.address,
          'comment': order.comment,
          'payment_method': order.get_payment_method_display(),
-         'restaurants': _get_order_restaurants(order),
+         'restaurants': sorted(_get_order_restaurants_with_coords(order),
+                               key=lambda restaurant: restaurant['distance']
+                               ),
          'total_amount': order.items.all().aggregate(total_amount=Sum(F('price') * F('quantity'),
                                                                       output_field=DecimalField(max_digits=8,
                                                                                                 decimal_places=2)
@@ -130,3 +136,28 @@ def _get_order_restaurants(order) -> set:
             restaurants.add(menu_item.restaurant)
 
     return restaurants
+
+
+def _get_order_restaurants_with_coords(order) -> list:
+    restaurants = []
+
+    for restaurant in _get_order_restaurants(order):
+        distance_ = get_distance(order.address, restaurant.address)
+        if distance_ is None:
+            continue
+        restaurants.append({'name': restaurant.name,
+                            'distance': distance_})
+
+    return restaurants
+
+
+def get_distance(place, restaurant):
+    try:
+        place_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
+        restaurant_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, restaurant)
+    except IndexError:
+        return None
+
+    distance_ = distance.distance(place_coords, restaurant_coords)
+
+    return distance_.km
