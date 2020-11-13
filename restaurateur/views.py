@@ -102,6 +102,7 @@ def view_orders(request):
          'phonenumber': order.phonenumber,
          'lastname': order.lastname,
          'address': order.address,
+         'comment': order.comment,
          'total_amount': order.items.all().aggregate(total_amount=Sum(F('price') * F('quantity'),
                                                                       output_field=DecimalField(max_digits=8,
                                                                                                 decimal_places=2)
