@@ -88,7 +88,7 @@ class Order(models.Model):
     registered_at = models.DateTimeField(auto_now=True)
     called_at = models.DateTimeField(default=dt.date.today)
     delivered_at = models.DateTimeField(default=dt.date.today)
-    payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='not_selected')
+    payment_method = models.CharField('Способ оплаты', max_length=20, choices=PAYMENT_CHOICES, default='not_selected')
 
     def __str__(self):
         return '{} {} {}'.format(self.firstname[:10], self.lastname[:10], self.address[:10])
