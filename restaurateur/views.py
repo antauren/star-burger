@@ -97,6 +97,7 @@ def view_restaurants(request):
 def view_orders(request):
     orders = [
         {'id': order.id,
+         'status': order.get_status_display(),
          'firstname': order.firstname,
          'phonenumber': order.phonenumber,
          'lastname': order.lastname,
