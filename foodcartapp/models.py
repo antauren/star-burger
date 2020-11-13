@@ -80,6 +80,7 @@ class Order(models.Model):
     comment = models.TextField('Комментарий', blank=True)
     registered_at = models.DateTimeField(auto_now=True)
     called_at = models.DateTimeField(default=dt.date.today)
+    delivered_at = models.DateTimeField(default=dt.date.today)
 
     def __str__(self):
         return '{} {} {}'.format(self.firstname[:10], self.lastname[:10], self.address[:10])
