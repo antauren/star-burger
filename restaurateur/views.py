@@ -156,6 +156,11 @@ def _get_order_restaurants_with_coords(order) -> list:
 def get_distance(place, restaurant):
     timeout = 60 * 60 * 6
     place_coords = cache.get(place)
+    restaurant_coords = cache.get(restaurant)
+
+    if place_coords == 'error' or restaurant_coords == 'error':
+        return None
+
     if place_coords is None:
         try:
             place_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
@@ -164,7 +169,6 @@ def get_distance(place, restaurant):
             cache.set(place, 'error', timeout)
             return None
 
-    restaurant_coords = cache.get(restaurant)
     if restaurant_coords is None:
         try:
             restaurant_coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, restaurant)
