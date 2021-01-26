@@ -4,3 +4,4 @@ dj-database-url==0.5.0
 Pillow==7.1.2
 djangorestframework==3.12.2
 geopy==2.0.0
+environs==9.3.0

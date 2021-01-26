@@ -2,6 +2,7 @@ import datetime as dt
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.core.validators import MinValueValidator
 
 
 class Restaurant(models.Model):
@@ -37,7 +38,7 @@ class Product(models.Model):
     name = models.CharField('название', max_length=50)
     category = models.ForeignKey(ProductCategory, null=True, blank=True, on_delete=models.SET_NULL,
                                  verbose_name='категория', related_name='products')
-    price = models.DecimalField('цена', max_digits=8, decimal_places=2)
+    price = models.DecimalField('цена', max_digits=8, decimal_places=2, validators=[MinValueValidator(0)])
     image = models.ImageField('картинка')
     special_status = models.BooleanField('спец.предложение', default=False, db_index=True)
     description = models.TextField('описание', max_length=200, blank=True)
@@ -53,8 +54,10 @@ class Product(models.Model):
 
 
 class RestaurantMenuItem(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menu_items')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='menu_items')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menu_items',
+                                   verbose_name="ресторан")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='menu_items',
+                                verbose_name='продукт')
     availability = models.BooleanField('в продаже', default=True, db_index=True)
 
     def __str__(self):
