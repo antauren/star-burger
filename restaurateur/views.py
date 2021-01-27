@@ -11,7 +11,7 @@ from geopy import distance
 from requests.exceptions import HTTPError
 
 from foodcartapp.models import Order, Product, Restaurant
-from StarBurger.settings import YANDEX_GEOCODER_API_KEY
+from star_burger.settings import YANDEX_GEOCODER_API_KEY
 
 from .utils import fetch_coordinates
 
