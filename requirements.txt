@@ -5,3 +5,4 @@ Pillow==7.1.2
 djangorestframework==3.12.2
 geopy==2.0.0
 environs==9.3.0
+requests==2.25.1
