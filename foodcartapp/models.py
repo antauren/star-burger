@@ -3,6 +3,7 @@ import datetime as dt
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Restaurant(models.Model):
@@ -85,7 +86,7 @@ class Order(models.Model):
     address = models.CharField('Адрес', max_length=100)
     firstname = models.CharField('Имя', max_length=20)
     lastname = models.CharField('Фамилия', max_length=20)
-    phonenumber = models.CharField('Телефон', max_length=20)
+    phonenumber = PhoneNumberField('Телефон')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unprocessed')
     comment = models.TextField('Комментарий', blank=True)
     registered_at = models.DateTimeField(auto_now=True)
