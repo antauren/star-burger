@@ -113,7 +113,7 @@ def view_orders(request):
          'restaurants': sorted(_get_order_restaurants_with_coords(order),
                                key=lambda restaurant: restaurant['distance']
                                ),
-         'total_amount': order.items.all().aggregate(total_amount=Sum(F('price') * F('quantity'),
+         'total_amount': order.items.aggregate(total_amount=Sum(F('price') * F('quantity'),
                                                                       output_field=DecimalField(max_digits=8,
                                                                                                 decimal_places=2)
                                                                       )
@@ -121,7 +121,7 @@ def view_orders(request):
 
          }
 
-        for order in Order.objects.all().order_by('-id')
+        for order in Order.objects.order_by('-id')
 
     ]
 
