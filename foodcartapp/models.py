@@ -1,8 +1,8 @@
 import datetime as dt
 
 from django.contrib.auth.models import User
-from django.db import models
 from django.core.validators import MinValueValidator
+from django.db import models
 
 
 class Restaurant(models.Model):
