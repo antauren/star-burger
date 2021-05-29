@@ -113,8 +113,7 @@ class ProductAdmin(admin.ModelAdmin):
     def get_image_preview(self, obj):
         if not obj.image:
             return 'выберите картинку'
-        return format_html('<img src="{url}" height="200"/>', url=obj.image.url)
-
+        return format_html('<img src="{url}" style="max-height: 200px;"/>', url=obj.image.url)
     get_image_preview.short_description = 'превью'
 
     def get_image_list_preview(self, obj):
@@ -125,7 +124,6 @@ class ProductAdmin(admin.ModelAdmin):
                            edit_url=edit_url,
                            src=obj.image.url
                            )
-
     get_image_list_preview.short_description = 'превью'
 
 
