@@ -144,8 +144,9 @@ def _get_order_restaurants_with_coords(order) -> list:
     restaurants = []
 
     for restaurant in _get_order_restaurants(order):
-        distance_ = _get_distance(order.address, restaurant.address)
-        if distance_ is None:
+        try:
+            distance_ = _get_distance(order.address, restaurant.address)
+        except (IndexError, HTTPError):
             continue
         restaurants.append({'name': restaurant.name,
                             'distance': distance_})
@@ -155,10 +156,6 @@ def _get_order_restaurants_with_coords(order) -> list:
 
 def _get_distance(place, restaurant):
     place_coords, restaurant_coords = map(_get_coordinates, [place, restaurant])
-
-    if 'error' in [place_coords, restaurant_coords]:
-        return None
-
     distance_ = distance.distance(place_coords, restaurant_coords)
 
     return distance_.km
@@ -168,11 +165,7 @@ def _get_coordinates(place):
     coords = cache.get(place)
 
     if coords is None:
-        try:
-            coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
-        except (IndexError, HTTPError):
-            coords = 'error'
-
+        coords = fetch_coordinates(YANDEX_GEOCODER_API_KEY, place)
         cache.set(place, coords, 60 * 30)
 
     return coords
