@@ -81,6 +81,11 @@ nodejs --version
 npm --version
 # 6.14.5
 ```
+для MacOS:
+```sh
+node --version
+# v12.18.2
+```
 
 Версия `nodejs` должна быть не младше 10.0. Версия `npm` не важна.
 
