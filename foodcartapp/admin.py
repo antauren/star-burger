@@ -3,6 +3,8 @@ from django.forms import ModelForm
 from django.shortcuts import HttpResponseRedirect, reverse
 from django.templatetags.static import static
 from django.utils.html import format_html
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
 
 from .models import (Order, OrderItem, Product, ProductCategory, Restaurant,
                      RestaurantMenuItem)
@@ -15,9 +17,10 @@ class OrderModelAdmin(admin.ModelAdmin):
         res = super(OrderModelAdmin, self).response_change(request, obj)
 
         if 'next' in request.GET:
-            return HttpResponseRedirect(request.GET['next'])
-        else:
-            return res
+            next_url = request.GET['next']
+            if url_has_allowed_host_and_scheme(next_url, settings.ALLOWED_HOSTS):
+                return HttpResponseRedirect(next_url)
+        return res
 
 
 class OrderItemInline(admin.TabularInline):
