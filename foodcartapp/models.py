@@ -141,11 +141,11 @@ class Order(models.Model):
     firstname = models.CharField('Имя', max_length=20)
     lastname = models.CharField('Фамилия', max_length=20)
     phonenumber = PhoneNumberField('Телефон')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unprocessed')
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='unprocessed')
     comment = models.TextField('Комментарий', blank=True)
-    registered_at = models.DateTimeField(auto_now=True)
-    called_at = models.DateTimeField(default=dt.date.today)
-    delivered_at = models.DateTimeField(default=dt.date.today)
+    registered_at = models.DateTimeField('Время заказа', auto_now=True)
+    called_at = models.DateTimeField('Время звонка', default=dt.date.today)
+    delivered_at = models.DateTimeField('Время доставки', default=dt.date.today)
     payment_method = models.CharField('Способ оплаты', max_length=20, choices=PAYMENT_CHOICES, default='not_selected')
 
     def __str__(self):
@@ -157,7 +157,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', verbose_name='Заказ')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items', verbose_name='Товар')
     quantity = models.PositiveSmallIntegerField('Количество', default=1)
     price = models.DecimalField('Цена', max_digits=8, decimal_places=2, default=0, validators=[MinValueValidator(0)])
