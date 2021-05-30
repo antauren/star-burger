@@ -122,7 +122,7 @@ def view_orders(request):
 
          }
 
-        for order in Order.objects.order_by('-id')
+        for order in Order.objects.order_by('-registered_at')
 
     ]
 
