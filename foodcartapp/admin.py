@@ -14,13 +14,12 @@ class OrderModelAdmin(admin.ModelAdmin):
     form = ModelForm
 
     def response_change(self, request, obj):
-        res = super(OrderModelAdmin, self).response_change(request, obj)
-
         if 'next' in request.GET:
             next_url = request.GET['next']
             if url_has_allowed_host_and_scheme(next_url, settings.ALLOWED_HOSTS):
                 return HttpResponseRedirect(next_url)
-        return res
+
+        return super(OrderModelAdmin, self).response_change(request, obj)
 
 
 class OrderItemInline(admin.TabularInline):
