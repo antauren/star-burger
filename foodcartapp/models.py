@@ -3,6 +3,7 @@ import datetime as dt
 from django.core.validators import MinValueValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db.models import DecimalField, F, Sum
 
 
 class Restaurant(models.Model):
@@ -131,6 +132,17 @@ class RestaurantMenuItem(models.Model):
         return f"{self.restaurant.name} - {self.product.name}"
 
 
+class OrderQuerySet(models.QuerySet):
+
+    def get_total_amount(self):
+        return self.annotate(
+            total_amount=Sum(
+                F('price') * F('quantity'),
+                output_field=DecimalField(max_digits=8, decimal_places=2)
+            )
+        )
+
+
 class Order(models.Model):
     STATUS_CHOICES = (
         ('unprocessed', 'Необработанный'),
@@ -152,6 +164,8 @@ class Order(models.Model):
     called_at = models.DateTimeField('Время звонка',)
     delivered_at = models.DateTimeField('Время доставки',)
     payment_method = models.CharField('Способ оплаты', max_length=20, choices=PAYMENT_CHOICES, default='not_selected')
+
+    objects = OrderQuerySet.as_manager()
 
     def __str__(self):
         return '{} {} {}'.format(self.firstname[:10], self.lastname[:10], self.address[:10])
