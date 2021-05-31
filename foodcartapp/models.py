@@ -149,8 +149,8 @@ class Order(models.Model):
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='unprocessed')
     comment = models.TextField('Комментарий', blank=True)
     registered_at = models.DateTimeField('Время заказа', auto_now=True)
-    called_at = models.DateTimeField('Время звонка', default=dt.date.today)
-    delivered_at = models.DateTimeField('Время доставки', default=dt.date.today)
+    called_at = models.DateTimeField('Время звонка',)
+    delivered_at = models.DateTimeField('Время доставки',)
     payment_method = models.CharField('Способ оплаты', max_length=20, choices=PAYMENT_CHOICES, default='not_selected')
 
     def __str__(self):
