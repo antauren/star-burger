@@ -8,17 +8,20 @@ from phonenumber_field.modelfields import PhoneNumberField
 class Restaurant(models.Model):
     name = models.CharField(
         'название',
+        db_index=True,
         max_length=50
     )
     address = models.CharField(
         'адрес',
         max_length=100,
         blank=True,
+        db_index=True,
     )
     contact_phone = models.CharField(
         'контактный телефон',
         max_length=50,
         blank=True,
+        db_index=True,
     )
 
     class Meta:
@@ -42,6 +45,7 @@ class ProductQuerySet(models.QuerySet):
 class ProductCategory(models.Model):
     name = models.CharField(
         'название',
+        db_index=True,
         max_length=50
     )
 
@@ -56,6 +60,7 @@ class ProductCategory(models.Model):
 class Product(models.Model):
     name = models.CharField(
         'название',
+        db_index=True,
         max_length=50
     )
     category = models.ForeignKey(
