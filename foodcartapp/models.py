@@ -135,7 +135,7 @@ class OrderQuerySet(models.QuerySet):
     def get_total_amount(self):
         return self.annotate(
             total_amount=Sum(
-                F('price') * F('quantity'),
+                F('items__price') * F('items__quantity'),
                 output_field=DecimalField(max_digits=8, decimal_places=2)
             )
         )

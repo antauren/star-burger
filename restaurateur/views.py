@@ -113,11 +113,11 @@ def view_orders(request):
          'restaurants': sorted(_get_order_restaurants_with_coords(order),
                                key=lambda restaurant: restaurant['distance']
                                ),
-         'total_amount': order.get_total_amount().total_amount,
+         'total_amount': order.total_amount,
 
          }
 
-        for order in Order.objects.order_by('-registered_at')
+        for order in Order.objects.order_by('-registered_at').get_total_amount()
 
     ]
 
