@@ -117,7 +117,11 @@ def view_orders(request):
 
          }
 
-        for order in Order.objects.order_by('-registered_at').get_total_amount()
+        for order in (Order.objects
+                      .prefetch_related('items__product__menu_items')
+                      .order_by('-registered_at')
+                      .get_total_amount()
+                      )
 
     ]
 
